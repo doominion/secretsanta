@@ -15,8 +15,9 @@ export default function Home() {
       return;
     }
     const pairs = generatePairs(rows);
-    const results = document.getElementById("results");
+    const results = document.getElementById("results") as HTMLUListElement;
     
+    results.innerHTML = '';
     pairs.pairs.forEach(pair => {
       const result = document.createElement("li");
       result.textContent = `Giver: ${pair.giver} - Receiver: ${pair.receiver}`;

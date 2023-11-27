@@ -20,6 +20,7 @@ export function generatePairs(names: string[]): Results {
         paired.push(new Pair(removed1[0], removed2[0]));
     }
 
+    // we add the remaining together to skip all the RNG
     paired.push(new Pair(givers[0], receivers[1]));
     paired.push(new Pair(givers[1], receivers[0]));
 
