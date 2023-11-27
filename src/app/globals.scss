@@ -1,0 +1,60 @@
+body,
+html {
+  background-color: #F5624D;
+  overflow: hidden;
+  font-family: 'Lato';
+  font-weight: 700;
+  font-size: 30px;
+  text-align: center;
+  text-transform: uppercase;
+  color: #FFF;
+}
+
+body {
+  height: 100vh;
+}
+
+.christmas-spirit {
+  height: 100%;
+  color: #FFF;
+  display: block;
+}
+
+textarea {
+  font-size: 25px;
+  ;
+  color: #000;
+  display: block;
+}
+
+.christmas-spirit .content {
+  position: relative;
+  z-index: 1231231;
+}
+
+.content-wrapper, .results-wrapper {
+  float: left;
+}
+
+.outer-wrapper {
+  margin: auto;
+  display: inline-block;
+  height: 730px;
+}
+
+.btn-generate {
+  padding: 10px;
+  font-size: 25px;
+  margin-top: 20px;
+}
+
+.results-list {
+  list-style: none;
+  text-align: left;
+  font-size: 16px;
+}
+
+.results-list li {
+  max-width: 700px;
+  margin: 15px 0;
+}

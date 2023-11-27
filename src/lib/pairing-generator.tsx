@@ -1,8 +1,18 @@
+import crypto, { createHash } from 'node:crypto';
 
-export function generatePairs(names: string[]): Results {
+export function generatePairs(names: string[], withClue: boolean): Results {
     let message = '';
     let givers: string[] = Object.create(names);
-    let receivers: string[] = Object.create(names);
+    let receivers: Receiver[] = names.map(n => {
+        if (withClue) {
+            const [first, ...rest] = n.split('-');
+
+            return new Receiver(first, rest.join('-'));
+        }
+        else {
+            return new Receiver(n, '');
+        }
+    });
 
     let paired: Pair[] = [];
 
@@ -20,7 +30,6 @@ export function generatePairs(names: string[]): Results {
         paired.push(new Pair(removed1[0], removed2[0]));
     }
 
-    // we add the remaining together to skip all the RNG
     paired.push(new Pair(givers[0], receivers[1]));
     paired.push(new Pair(givers[1], receivers[0]));
 
@@ -58,11 +67,22 @@ export class Results {
 };
 
 export class Pair {
-    constructor(giver: string, receiver: string) {
+    constructor(giver: string, receiver: Receiver) {
         this.giver = giver;
         this.receiver = receiver;
     }
 
     giver: string;
-    receiver: string;
+    receiver: Receiver;
 };
+
+export class Receiver {
+    constructor(name: string, clue: string) {
+        this.name = name;
+        this.clue = clue;
+    }
+
+    name: string;
+    clue: string;
+}
+

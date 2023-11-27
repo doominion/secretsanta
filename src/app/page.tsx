@@ -14,27 +14,37 @@ export default function Home() {
       console.log("not enough rows to pair");
       return;
     }
-    const pairs = generatePairs(rows);
+
+    const pairs = generatePairs(rows, rows[0].indexOf('-') > 0);
     const results = document.getElementById("results") as HTMLUListElement;
-    
+
     results.innerHTML = '';
     pairs.pairs.forEach(pair => {
       const result = document.createElement("li");
-      result.textContent = `Giver: ${pair.giver} - Receiver: ${pair.receiver}`;
-      results?.appendChild(result);
+
+        result.textContent = `Giver: ${pair.giver} - Receiver: ${JSON.stringify(pair.receiver)}.`;
+        results?.appendChild(result);
     });
   }
 
+
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1>Lidl santa generator</h1>
-      <textarea rows={25} cols={100} id="names">
+    <div className="content">
+      <h1>Santa pairs generator</h1>
+      <div className="outer-wrapper">
+        <div className="content-wrapper">
+          <textarea rows={25} cols={60} id="names">
 
-      </textarea>
-      <button type="submit" onClick={btnClick}>Generate pairs</button>
-      <ul id="results">
+          </textarea>
+          <button className="btn-generate" type="submit" onClick={btnClick}>Generate pairs</button>
+        </div>
+        <div className="results-wrapper">
+          <ul id="results" className="results-list">
 
-      </ul>
-    </main>
+          </ul>
+        </div>
+      </div>
+    </div>
   )
 }
