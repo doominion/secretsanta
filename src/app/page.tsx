@@ -3,7 +3,7 @@ import { generatePairs } from "@/lib/pairing-generator";
 
 export default function Home() {
   function btnClick() {
-    const names: string = document.getElementById("names")?.value;
+    const names: string = (document.getElementById("names") as HTMLTextAreaElement)?.value;
 
     if (names === '' || names === undefined) {
       return;
