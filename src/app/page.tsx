@@ -57,7 +57,7 @@ export default function Home() {
       result.appendChild(a);
 
       encrypt(pair).then(f => {
-        a.href = `${window.location.origin}/?${f}`;
+        a.href = `${window.location.href}/?${f}`;
         a.text = `Give this link to: ${pair.giver}`;
         results?.appendChild(result);
       });
