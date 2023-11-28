@@ -6,7 +6,7 @@ html {
   font-weight: 700;
   font-size: 30px;
   text-align: center;
-  text-transform: uppercase;
+  // text-transform: uppercase;
   color: #FFF;
 }
 
@@ -22,7 +22,8 @@ body {
 
 textarea {
   font-size: 25px;
-  ;
+  height: 65vh;
+  width: 100%;
   color: #000;
   display: block;
 }
@@ -33,13 +34,20 @@ textarea {
 }
 
 .content-wrapper, .results-wrapper {
+  width: 50%;
   float: left;
+}
+
+.results-wrapper {
+  height: 75vh;
+  overflow: auto;
 }
 
 .outer-wrapper {
   margin: auto;
   display: inline-block;
   height: 730px;
+  width: 1500px;
 }
 
 .btn-generate {
@@ -56,5 +64,15 @@ textarea {
 
 .results-list li {
   max-width: 700px;
-  margin: 15px 0;
+  margin: 5px 0;
+  padding: 3px 15px;
+  border-radius: 15px;
+}
+
+li:nth-child(even){
+  background-color:#34A65F;
+}
+
+li:nth-child(odd){
+  background-color: #0F8A5F;
 }

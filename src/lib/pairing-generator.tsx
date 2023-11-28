@@ -1,13 +1,18 @@
-import crypto, { createHash } from 'node:crypto';
+// import CryptoJS from 'crypto-js';
 
-export function generatePairs(names: string[], withClue: boolean): Results {
+export function generatePairs(names: string[]): Results {
     let message = '';
-    let givers: string[] = Object.create(names);
-    let receivers: Receiver[] = names.map(n => {
-        if (withClue) {
-            const [first, ...rest] = n.split('-');
+    let givers: string[] = names.map(n => {
+        const [first, ...rest] = n.split('(');
+        return first;
+    });
 
-            return new Receiver(first, rest.join('-'));
+    let receivers: Receiver[] = names.map(n => {
+        if (n.indexOf('(') > 0 && n.indexOf(')') > 0) {
+            const [first, ...rest] = n.split('(');
+            const r = rest.join('').trim().replaceAll('(', '').replaceAll(')', '');
+
+            return new Receiver(first, r);
         }
         else {
             return new Receiver(n, '');
@@ -86,3 +91,72 @@ export class Receiver {
     clue: string;
 }
 
+export async function encrypt(pair: Pair): Promise<string> {
+    const str = `${pair.giver}~${pair.receiver.name}~${pair.receiver.clue}`;
+
+    let key = await window.crypto.subtle.generateKey({
+        name: "AES-GCM",
+        length: 256
+    }, true, ["encrypt", "decrypt"]);
+
+    const encryptedPair = await window.crypto.subtle.encrypt({
+        name: "AES-GCM",
+        iv: new Uint8Array([1, 0, 1])
+    }, key, Buffer.from(str));
+
+    const keyBuf = await window.crypto.subtle.exportKey("raw", key);
+    const strKey = btoa(String.fromCharCode(...new Uint8Array(keyBuf)));
+    const stringifiedPair = btoa(String.fromCharCode(...new Uint8Array(encryptedPair)));
+
+    return `key=${encodeURIComponent(strKey)}&group=${encodeURIComponent(stringifiedPair)}`;
+}
+
+export async function decrypt(token: string, key: string): Promise<Pair> {
+    let decodedToken = decodeURIComponent(token);
+    let decodedKey = decodeURIComponent(key);
+
+    const k2 = atob(decodedKey);
+    const t2 = atob(decodedToken);
+
+    const k = await window.crypto.subtle.importKey("raw", getCharCodes(k2), 'AES-GCM', true, [
+        'encrypt',
+        'decrypt'
+    ]);
+
+    const decriptedValues = await window.crypto.subtle.decrypt({
+        name: "AES-GCM",
+        iv: new Uint8Array([1, 0, 1])
+    }, k, getCharCodes(t2));
+
+    const decoded = String.fromCharCode(...new Uint8Array(decriptedValues));
+    const values = decoded.split('~');
+
+    return new Pair(values[0], new Receiver(values[1], values[2]));
+}
+
+function getCharCodes(data: string): Uint8Array {
+    let index = -1;
+    let result: number[] = [];
+    while (++index < data.length) {
+        result.push(data.charCodeAt(index));
+    }
+
+    return new Uint8Array(result);
+}
+
+// export function encrypt(pair: Pair): string {
+//     const str = `${pair.giver}~${pair.receiver.name}~${pair.receiver.clue}`;
+//     const secret = btoa(String.fromCharCode(...window.crypto.getRandomValues(new Uint8Array(32))));
+
+//     const text = CryptoJS.AES.encrypt(str, secret).toString();
+
+//     return `?key=${encodeURIComponent(secret)}&pairing=${encodeURIComponent(text)}`;
+// }
+
+// export function decrypt(key: string, token: string): Pair {
+//     const data = CryptoJS.AES.decrypt(token, key).toString(CryptoJS.enc.Utf8);
+
+//     const arr = data.split('~');
+
+//     return new Pair(arr[0], new Receiver(arr[1], arr[2]));
+// }
