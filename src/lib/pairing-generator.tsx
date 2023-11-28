@@ -4,7 +4,7 @@ export function generatePairs(names: string[]): Results {
     let message = '';
     let givers: string[] = names.map(n => {
         const [first, ...rest] = n.split('(');
-        return first;
+        return first.trim();
     });
 
     let receivers: Receiver[] = names.map(n => {
@@ -12,10 +12,10 @@ export function generatePairs(names: string[]): Results {
             const [first, ...rest] = n.split('(');
             const r = rest.join('').trim().replaceAll('(', '').replaceAll(')', '');
 
-            return new Receiver(first, r);
+            return new Receiver(first.trim(), r.trim());
         }
         else {
-            return new Receiver(n, '');
+            return new Receiver(n.trim(), '');
         }
     });
 
@@ -32,17 +32,22 @@ export function generatePairs(names: string[]): Results {
         const removed1 = givers.splice(pick1, 1);
         const removed2 = receivers.splice(pick2, 1);
 
+        compareStrings(removed1[0], removed2[0].name);
+
         paired.push(new Pair(removed1[0], removed2[0]));
     }
 
+    compareStrings(givers[0], receivers[1].name);
     paired.push(new Pair(givers[0], receivers[1]));
     paired.push(new Pair(givers[1], receivers[0]));
 
     var duplicates = paired.filter((value, idx, self) => {
         idx === self.findIndex(t => {
-            value.giver === t.giver || value.receiver == t.receiver;
+            value.giver === t.giver || value.receiver.name == t.receiver.name;
         });
     });
+
+
     if (duplicates.length > 0) {
         message = 'Duplicates found during generation. You might want to retry!';
         console.error(`Duplicates: ${JSON.stringify(duplicates)}`);
@@ -52,6 +57,12 @@ export function generatePairs(names: string[]): Results {
 
     return new Results(message, paired);
 };
+
+function compareStrings(str1: string, str2: string){
+    if(str1 === str2){
+        alert("You might want to try again, something went wrong");
+    }
+}
 
 function pickRandomNumber(size: number) {
     var pickedNumber = Math.floor(Math.random() * size);
